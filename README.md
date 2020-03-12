@@ -10,9 +10,7 @@ For more details, please visit the web site [here](http://openusd.org).
 Build Status
 ------------
 
-|       | master | dev |
-| ----- | ------ | --- |
-| Linux/macOS | [![Build Status](https://travis-ci.com/PixarAnimationStudios/USD.svg?branch=master)](https://travis-ci.com/PixarAnimationStudios/USD) | [![Build Status](https://travis-ci.com/PixarAnimationStudios/USD.svg?branch=dev)](https://travis-ci.com/PixarAnimationStudios/USD) |
+[![Build Status](https://dev.azure.com/hamedsabri/USD/_apis/build/status/HamedSabri-adsk.USD?branchName=master)](https://dev.azure.com/hamedsabri/USD/_build/latest?definitionId=1&branchName=master)
 
 Additional Documentation
 ------------------------
