@@ -1,5 +1,13 @@
 trigger:
-- dev
+- azure_pipelines
+
+strategy:
+  matrix:
+    64-bit Release:
+      BuildType: RelWithDebInfo
+      CMakeArgs: '"Visual Studio 15 2017 Win64"'
+      BuildFolder: '$(Build.BinariesDirectory)\build'
+      InstallFolder: '$(Build.BinariesDirectory)\install'
 
 jobs:
 - job:
@@ -13,3 +21,6 @@ jobs:
         versionSpec: '2.7'
         addToPath: true
       displayName: Use python2.7!
+
+    - script: python build_scripts/build_usd.py $(InstallFolder)
+        displayName: 'Run build script!'
