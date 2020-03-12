@@ -10,7 +10,7 @@ For more details, please visit the web site [here](http://openusd.org).
 Build Status
 ------------
 
-[![Build Status](https://dev.azure.com/hamedsabri/USD/_apis/build/status/HamedSabri-adsk.USD?branchName=master)](https://dev.azure.com/hamedsabri/USD/_build/latest?definitionId=1&branchName=master)
+[![Build Status](https://dev.azure.com/hamedsabri/USD/_apis/build/status/HamedSabri-adsk.USD?branchName=azure_pipelines)](https://dev.azure.com/hamedsabri/USD/_build/latest?definitionId=1&branchName=azure_pipelines)
 
 Additional Documentation
 ------------------------
