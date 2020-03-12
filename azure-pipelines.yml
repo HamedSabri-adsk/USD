@@ -20,6 +20,7 @@ jobs:
       inputs:
         versionSpec: '2.7'
         addToPath: true
+        architecture: 'x64'
       displayName: Use python2.7!
 
     - script: python build_scripts/build_usd.py $(InstallFolder)
