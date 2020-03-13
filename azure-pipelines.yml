@@ -28,9 +28,9 @@ jobs:
        displayName: 'list python packages'
 
      - script: |
-        SET PATH="C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Auxiliary\Build";"C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Tools\MSVC\14.16.27023\bin\HostX64\x64";"C:\Program Files\CMake\bin\cmake.exe";%PATH%
+        SET PATH="C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Tools\MSVC\14.16.27023\bin\HostX64\x64";"C:\Program Files\CMake\bin\cmake.exe";%PATH%
         echo %PATH%
-        vcvars64.bat
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Auxiliary\Build\vcvars64.bat"
 
-     - script: python build_scripts/build_usd.py $(InstallFolder)
-       displayName: 'Run build script!'
+    #  - script: python build_scripts/build_usd.py $(InstallFolder)
+    #    displayName: 'Run build script!'
