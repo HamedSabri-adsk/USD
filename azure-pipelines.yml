@@ -23,7 +23,15 @@ jobs:
         addToPath: true 
         architecture: 'x64' # Options: x86, x64 (this argument applies only on Windows agents)
        displayName: Use python 2.7!
-
+      
+     - task: VSBuild@1
+       inputs:
+         solution: '**\*.sln'
+         vsVersion: '15.0'
+         maximumCpuCount: true
+         msbuildArchitecture: 'x64'
+         createLogFile: true
+    
      - script: python.exe --version
        displayName: 'Install dependencies'
 
