@@ -3,6 +3,7 @@ trigger:
 
 jobs:
 - job:
+  displayName: WindowsAgent
   pool: 'Default'
 
   strategy:
@@ -17,6 +18,11 @@ jobs:
         python.version: '2.7'
 
   steps:
+
+     - task: InstallPython@1
+       inputs:
+         version: 'python2'
+         prerelease: true
      - task: UsePythonVersion@0
        inputs:
          versionSpec: 2.7
