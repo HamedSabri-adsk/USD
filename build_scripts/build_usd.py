@@ -588,92 +588,92 @@ elif Windows():
         BOOST_VERSION_FILE = "include/boost-1_65_1/boost/version.hpp"
 
 
-# def InstallBoost(context, force, buildArgs):
-#     # Documentation files in the boost archive can have exceptionally
-#     # long paths. This can lead to errors when extracting boost on Windows,
-#     # since paths are limited to 260 characters by default on that platform.
-#     # To avoid this, we skip extracting all documentation.
-#     #
-#     # For some examples, see: https://svn.boost.org/trac10/ticket/11677
-#     dontExtract = ["*/doc/*", "*/libs/*/doc/*"]
+def InstallBoost(context, force, buildArgs):
+    # Documentation files in the boost archive can have exceptionally
+    # long paths. This can lead to errors when extracting boost on Windows,
+    # since paths are limited to 260 characters by default on that platform.
+    # To avoid this, we skip extracting all documentation.
+    #
+    # For some examples, see: https://svn.boost.org/trac10/ticket/11677
+    dontExtract = ["*/doc/*", "*/libs/*/doc/*"]
 
-#     with CurrentWorkingDirectory(DownloadURL(BOOST_URL, context, force, 
-#                                              dontExtract)):
-#         bootstrap = "bootstrap.bat" if Windows() else "./bootstrap.sh"
-#         Run('{bootstrap} --prefix="{instDir}"'
-#             .format(bootstrap=bootstrap, instDir=context.instDir))
+    with CurrentWorkingDirectory(DownloadURL(BOOST_URL, context, force, 
+                                             dontExtract)):
+        bootstrap = "bootstrap.bat" if Windows() else "./bootstrap.sh"
+        Run('{bootstrap} --prefix="{instDir}"'
+            .format(bootstrap=bootstrap, instDir=context.instDir))
 
-#         # b2 supports at most -j64 and will error if given a higher value.
-#         num_procs = min(64, context.numJobs)
+        # b2 supports at most -j64 and will error if given a higher value.
+        num_procs = min(64, context.numJobs)
 
-#         b2_settings = [
-#             '--prefix="{instDir}"'.format(instDir=context.instDir),
-#             '--build-dir="{buildDir}"'.format(buildDir=context.buildDir),
-#             '-j{procs}'.format(procs=num_procs),
-#             'address-model=64',
-#             'link=shared',
-#             'runtime-link=shared',
-#             'threading=multi', 
-#             'variant={variant}'
-#                 .format(variant="debug" if context.buildDebug else "release"),
-#             '--with-atomic',
-#             '--with-program_options',
-#             '--with-regex'
-#         ]
+        b2_settings = [
+            '--prefix="{instDir}"'.format(instDir=context.instDir),
+            '--build-dir="{buildDir}"'.format(buildDir=context.buildDir),
+            '-j{procs}'.format(procs=num_procs),
+            'address-model=64',
+            'link=shared',
+            'runtime-link=shared',
+            'threading=multi', 
+            'variant={variant}'
+                .format(variant="debug" if context.buildDebug else "release"),
+            '--with-atomic',
+            '--with-program_options',
+            '--with-regex'
+        ]
 
-#         if context.buildPython:
-#             b2_settings.append("--with-python")
+        if context.buildPython:
+            b2_settings.append("--with-python")
 
-#         if context.buildKatana or context.buildOIIO:
-#             b2_settings.append("--with-date_time")
+        if context.buildKatana or context.buildOIIO:
+            b2_settings.append("--with-date_time")
 
-#         if context.buildKatana or context.buildOIIO or context.enableOpenVDB:
-#             b2_settings.append("--with-system")
-#             b2_settings.append("--with-thread")
+        if context.buildKatana or context.buildOIIO or context.enableOpenVDB:
+            b2_settings.append("--with-system")
+            b2_settings.append("--with-thread")
 
-#         if context.enableOpenVDB:
-#             b2_settings.append("--with-iostreams")
+        if context.enableOpenVDB:
+            b2_settings.append("--with-iostreams")
 
-#             # b2 with -sNO_COMPRESSION=1 fails with the following error message:
-#             #     error: at [...]/boost_1_61_0/tools/build/src/kernel/modules.jam:107
-#             #     error: Unable to find file or target named
-#             #     error:     '/zlib//zlib'
-#             #     error: referred to from project at
-#             #     error:     'libs/iostreams/build'
-#             #     error: could not resolve project reference '/zlib'
+            # b2 with -sNO_COMPRESSION=1 fails with the following error message:
+            #     error: at [...]/boost_1_61_0/tools/build/src/kernel/modules.jam:107
+            #     error: Unable to find file or target named
+            #     error:     '/zlib//zlib'
+            #     error: referred to from project at
+            #     error:     'libs/iostreams/build'
+            #     error: could not resolve project reference '/zlib'
 
-#             # But to avoid an extra library dependency, we can still explicitly
-#             # exclude the bzip2 compression from boost_iostreams (note that
-#             # OpenVDB uses blosc compression).
-#             b2_settings.append("-sNO_BZIP2=1")
+            # But to avoid an extra library dependency, we can still explicitly
+            # exclude the bzip2 compression from boost_iostreams (note that
+            # OpenVDB uses blosc compression).
+            b2_settings.append("-sNO_BZIP2=1")
 
-#         if context.buildOIIO:
-#             b2_settings.append("--with-filesystem")
+        if context.buildOIIO:
+            b2_settings.append("--with-filesystem")
 
-#         if force:
-#             b2_settings.append("-a")
+        if force:
+            b2_settings.append("-a")
 
-#         if Windows():
-#             if IsVisualStudio2019OrGreater():
-#                 pass
-#             if IsVisualStudio2017OrGreater():
-#                 b2_settings.append("toolset=msvc-14.1")
-#             else:
-#                 b2_settings.append("toolset=msvc-14.1")
+        if Windows():
+            if IsVisualStudio2019OrGreater():
+                pass
+            if IsVisualStudio2017OrGreater():
+                b2_settings.append("toolset=msvc-14.1")
+            else:
+                b2_settings.append("toolset=msvc-14.1")
 
-#         if MacOS():
-#             # Must specify toolset=clang to ensure install_name for boost
-#             # libraries includes @rpath
-#             b2_settings.append("toolset=clang")
+        if MacOS():
+            # Must specify toolset=clang to ensure install_name for boost
+            # libraries includes @rpath
+            b2_settings.append("toolset=clang")
 
-#         # Add on any user-specified extra arguments.
-#         b2_settings += buildArgs
+        # Add on any user-specified extra arguments.
+        b2_settings += buildArgs
 
-#         b2 = "b2" if Windows() else "./b2"
-#         Run('{b2} {options} install'
-#             .format(b2=b2, options=" ".join(b2_settings)))
+        b2 = "b2" if Windows() else "./b2"
+        Run('{b2} {options} install'
+            .format(b2=b2, options=" ".join(b2_settings)))
 
-# BOOST = Dependency("boost", InstallBoost, BOOST_VERSION_FILE)
+BOOST = Dependency("boost", InstallBoost, BOOST_VERSION_FILE)
 
 ############################################################
 # Intel TBB
@@ -1033,58 +1033,58 @@ OPENCOLORIO = Dependency("OpenColorIO", InstallOpenColorIO,
 ############################################################
 # OpenSubdiv
 
-# OPENSUBDIV_URL = "https://github.com/PixarAnimationStudios/OpenSubdiv/archive/v3_1_1.zip"
+OPENSUBDIV_URL = "https://github.com/PixarAnimationStudios/OpenSubdiv/archive/v3_1_1.zip"
 
-# def InstallOpenSubdiv(context, force, buildArgs):
-#     with CurrentWorkingDirectory(DownloadURL(OPENSUBDIV_URL, context, force)):
-#         extraArgs = [
-#             '-DNO_EXAMPLES=ON',
-#             '-DNO_TUTORIALS=ON',
-#             '-DNO_REGRESSION=ON',
-#             '-DNO_DOC=ON',
-#             '-DNO_OMP=ON',
-#             '-DNO_CUDA=ON',
-#             '-DNO_OPENCL=ON',
-#             '-DNO_DX=ON',
-#             '-DNO_TESTS=ON',
-#         ]
+def InstallOpenSubdiv(context, force, buildArgs):
+    with CurrentWorkingDirectory(DownloadURL(OPENSUBDIV_URL, context, force)):
+        extraArgs = [
+            '-DNO_EXAMPLES=ON',
+            '-DNO_TUTORIALS=ON',
+            '-DNO_REGRESSION=ON',
+            '-DNO_DOC=ON',
+            '-DNO_OMP=ON',
+            '-DNO_CUDA=ON',
+            '-DNO_OPENCL=ON',
+            '-DNO_DX=ON',
+            '-DNO_TESTS=ON',
+        ]
 
-#         # OpenSubdiv's FindGLEW module won't look in CMAKE_PREFIX_PATH, so
-#         # we need to explicitly specify GLEW_LOCATION here.
-#         extraArgs.append('-DGLEW_LOCATION="{instDir}"'
-#                          .format(instDir=context.instDir))
+        # OpenSubdiv's FindGLEW module won't look in CMAKE_PREFIX_PATH, so
+        # we need to explicitly specify GLEW_LOCATION here.
+        extraArgs.append('-DGLEW_LOCATION="{instDir}"'
+                         .format(instDir=context.instDir))
 
-#         # If Ptex support is disabled in USD, disable support in OpenSubdiv
-#         # as well. This ensures OSD doesn't accidentally pick up a Ptex
-#         # library outside of our build.
-#         if not context.enablePtex:
-#             extraArgs.append('-DNO_PTEX=ON')
+        # If Ptex support is disabled in USD, disable support in OpenSubdiv
+        # as well. This ensures OSD doesn't accidentally pick up a Ptex
+        # library outside of our build.
+        if not context.enablePtex:
+            extraArgs.append('-DNO_PTEX=ON')
 
-#         # NOTE: For now, we disable TBB in our OpenSubdiv build.
-#         # This avoids an issue where OpenSubdiv will link against
-#         # all TBB libraries it finds, including libtbbmalloc and
-#         # libtbbmalloc_proxy. On Linux and MacOS, this has the
-#         # unwanted effect of replacing the system allocator with
-#         # tbbmalloc.
-#         extraArgs.append('-DNO_TBB=ON')
+        # NOTE: For now, we disable TBB in our OpenSubdiv build.
+        # This avoids an issue where OpenSubdiv will link against
+        # all TBB libraries it finds, including libtbbmalloc and
+        # libtbbmalloc_proxy. On Linux and MacOS, this has the
+        # unwanted effect of replacing the system allocator with
+        # tbbmalloc.
+        extraArgs.append('-DNO_TBB=ON')
 
-#         # Add on any user-specified extra arguments.
-#         extraArgs += buildArgs
+        # Add on any user-specified extra arguments.
+        extraArgs += buildArgs
 
-#         oldGenerator = context.cmakeGenerator
+        oldGenerator = context.cmakeGenerator
     
-#         # OpenSubdiv seems to error when building on windows w/ Ninja...
-#         # ...so just use the default generator (ie, Visual Studio on Windows)
-#         # until someone can sort it out
-#         if oldGenerator == "Ninja" and Windows():
-#             context.cmakeGenerator = None
-#         try:
-#             RunCMake(context, force, extraArgs)
-#         finally:
-#             context.cmakeGenerator = oldGenerator
+        # OpenSubdiv seems to error when building on windows w/ Ninja...
+        # ...so just use the default generator (ie, Visual Studio on Windows)
+        # until someone can sort it out
+        if oldGenerator == "Ninja" and Windows():
+            context.cmakeGenerator = None
+        try:
+            RunCMake(context, force, extraArgs)
+        finally:
+            context.cmakeGenerator = oldGenerator
 
-# OPENSUBDIV = Dependency("OpenSubdiv", InstallOpenSubdiv, 
-#                         "include/opensubdiv/version.h")
+OPENSUBDIV = Dependency("OpenSubdiv", InstallOpenSubdiv, 
+                        "include/opensubdiv/version.h")
 
 ############################################################
 # PyOpenGL
@@ -1200,149 +1200,149 @@ MATERIALX = Dependency("MaterialX", InstallMaterialX, "include/MaterialXCore/Lib
 ############################################################
 # USD
 
-# def InstallUSD(context, force, buildArgs):
-#     with CurrentWorkingDirectory(context.usdSrcDir):
-#         extraArgs = []
+def InstallUSD(context, force, buildArgs):
+    with CurrentWorkingDirectory(context.usdSrcDir):
+        extraArgs = []
 
-#         if context.buildPython:
-#             extraArgs.append('-DPXR_ENABLE_PYTHON_SUPPORT=ON')
+        if context.buildPython:
+            extraArgs.append('-DPXR_ENABLE_PYTHON_SUPPORT=ON')
 
-#             # CMake has trouble finding the executable, library, and include
-#             # directories when there are multiple versions of Python installed.
-#             # This can lead to crashes due to USD being linked against one
-#             # version of Python but running through some other Python
-#             # interpreter version. This primarily shows up on macOS, as it's
-#             # common to have a Python install that's separate from the one
-#             # included with the system.
-#             #
-#             # To avoid this, we try to determine these paths from Python
-#             # itself rather than rely on CMake's heuristics.
-#             pythonInfo = GetPythonInfo()
-#             if pythonInfo:
-#                 extraArgs.append('-DPYTHON_EXECUTABLE="{pyExecPath}"'
-#                                  .format(pyExecPath=pythonInfo[0]))
-#                 extraArgs.append('-DPYTHON_LIBRARY="{pyLibPath}"'
-#                                  .format(pyLibPath=pythonInfo[1]))
-#                 extraArgs.append('-DPYTHON_INCLUDE_DIR="{pyIncPath}"'
-#                                  .format(pyIncPath=pythonInfo[2]))
-#         else:
-#             extraArgs.append('-DPXR_ENABLE_PYTHON_SUPPORT=OFF')
+            # CMake has trouble finding the executable, library, and include
+            # directories when there are multiple versions of Python installed.
+            # This can lead to crashes due to USD being linked against one
+            # version of Python but running through some other Python
+            # interpreter version. This primarily shows up on macOS, as it's
+            # common to have a Python install that's separate from the one
+            # included with the system.
+            #
+            # To avoid this, we try to determine these paths from Python
+            # itself rather than rely on CMake's heuristics.
+            pythonInfo = GetPythonInfo()
+            if pythonInfo:
+                extraArgs.append('-DPYTHON_EXECUTABLE="{pyExecPath}"'
+                                 .format(pyExecPath=pythonInfo[0]))
+                extraArgs.append('-DPYTHON_LIBRARY="{pyLibPath}"'
+                                 .format(pyLibPath=pythonInfo[1]))
+                extraArgs.append('-DPYTHON_INCLUDE_DIR="{pyIncPath}"'
+                                 .format(pyIncPath=pythonInfo[2]))
+        else:
+            extraArgs.append('-DPXR_ENABLE_PYTHON_SUPPORT=OFF')
 
-#         if context.buildShared:
-#             extraArgs.append('-DBUILD_SHARED_LIBS=ON')
-#         elif context.buildMonolithic:
-#             extraArgs.append('-DPXR_BUILD_MONOLITHIC=ON')
+        if context.buildShared:
+            extraArgs.append('-DBUILD_SHARED_LIBS=ON')
+        elif context.buildMonolithic:
+            extraArgs.append('-DPXR_BUILD_MONOLITHIC=ON')
 
-#         if context.buildDebug:
-#             extraArgs.append('-DTBB_USE_DEBUG_BUILD=ON')
-#         else:
-#             extraArgs.append('-DTBB_USE_DEBUG_BUILD=OFF')
+        if context.buildDebug:
+            extraArgs.append('-DTBB_USE_DEBUG_BUILD=ON')
+        else:
+            extraArgs.append('-DTBB_USE_DEBUG_BUILD=OFF')
         
-#         if context.buildDocs:
-#             extraArgs.append('-DPXR_BUILD_DOCUMENTATION=ON')
-#         else:
-#             extraArgs.append('-DPXR_BUILD_DOCUMENTATION=OFF')
+        if context.buildDocs:
+            extraArgs.append('-DPXR_BUILD_DOCUMENTATION=ON')
+        else:
+            extraArgs.append('-DPXR_BUILD_DOCUMENTATION=OFF')
     
-#         if context.buildTests:
-#             extraArgs.append('-DPXR_BUILD_TESTS=ON')
-#         else:
-#             extraArgs.append('-DPXR_BUILD_TESTS=OFF')
+        if context.buildTests:
+            extraArgs.append('-DPXR_BUILD_TESTS=ON')
+        else:
+            extraArgs.append('-DPXR_BUILD_TESTS=OFF')
             
-#         if context.buildImaging:
-#             extraArgs.append('-DPXR_BUILD_IMAGING=ON')
-#             if context.enablePtex:
-#                 extraArgs.append('-DPXR_ENABLE_PTEX_SUPPORT=ON')
-#             else:
-#                 extraArgs.append('-DPXR_ENABLE_PTEX_SUPPORT=OFF')
+        if context.buildImaging:
+            extraArgs.append('-DPXR_BUILD_IMAGING=ON')
+            if context.enablePtex:
+                extraArgs.append('-DPXR_ENABLE_PTEX_SUPPORT=ON')
+            else:
+                extraArgs.append('-DPXR_ENABLE_PTEX_SUPPORT=OFF')
 
-#             if context.enableOpenVDB:
-#                 extraArgs.append('-DPXR_ENABLE_OPENVDB_SUPPORT=ON')
-#             else:
-#                 extraArgs.append('-DPXR_ENABLE_OPENVDB_SUPPORT=OFF')
+            if context.enableOpenVDB:
+                extraArgs.append('-DPXR_ENABLE_OPENVDB_SUPPORT=ON')
+            else:
+                extraArgs.append('-DPXR_ENABLE_OPENVDB_SUPPORT=OFF')
 
-#             if context.buildEmbree:
-#                 if context.embreeLocation:
-#                     extraArgs.append('-DEMBREE_LOCATION="{location}"'
-#                                      .format(location=context.embreeLocation))
-#                 extraArgs.append('-DPXR_BUILD_EMBREE_PLUGIN=ON')
-#             else:
-#                 extraArgs.append('-DPXR_BUILD_EMBREE_PLUGIN=OFF')
+            if context.buildEmbree:
+                if context.embreeLocation:
+                    extraArgs.append('-DEMBREE_LOCATION="{location}"'
+                                     .format(location=context.embreeLocation))
+                extraArgs.append('-DPXR_BUILD_EMBREE_PLUGIN=ON')
+            else:
+                extraArgs.append('-DPXR_BUILD_EMBREE_PLUGIN=OFF')
 
-#             if context.buildPrman:
-#                 if context.prmanLocation:
-#                     extraArgs.append('-DRENDERMAN_LOCATION="{location}"'
-#                                      .format(location=context.prmanLocation))
-#                 extraArgs.append('-DPXR_BUILD_PRMAN_PLUGIN=ON')
-#             else:
-#                 extraArgs.append('-DPXR_BUILD_PRMAN_PLUGIN=OFF')                
+            if context.buildPrman:
+                if context.prmanLocation:
+                    extraArgs.append('-DRENDERMAN_LOCATION="{location}"'
+                                     .format(location=context.prmanLocation))
+                extraArgs.append('-DPXR_BUILD_PRMAN_PLUGIN=ON')
+            else:
+                extraArgs.append('-DPXR_BUILD_PRMAN_PLUGIN=OFF')                
             
-#             if context.buildOIIO:
-#                 extraArgs.append('-DPXR_BUILD_OPENIMAGEIO_PLUGIN=ON')
-#             else:
-#                 extraArgs.append('-DPXR_BUILD_OPENIMAGEIO_PLUGIN=OFF')
+            if context.buildOIIO:
+                extraArgs.append('-DPXR_BUILD_OPENIMAGEIO_PLUGIN=ON')
+            else:
+                extraArgs.append('-DPXR_BUILD_OPENIMAGEIO_PLUGIN=OFF')
                 
-#             if context.buildOCIO:
-#                 extraArgs.append('-DPXR_BUILD_OPENCOLORIO_PLUGIN=ON')
-#             else:
-#                 extraArgs.append('-DPXR_BUILD_OPENCOLORIO_PLUGIN=OFF')
+            if context.buildOCIO:
+                extraArgs.append('-DPXR_BUILD_OPENCOLORIO_PLUGIN=ON')
+            else:
+                extraArgs.append('-DPXR_BUILD_OPENCOLORIO_PLUGIN=OFF')
 
-#         else:
-#             extraArgs.append('-DPXR_BUILD_IMAGING=OFF')
+        else:
+            extraArgs.append('-DPXR_BUILD_IMAGING=OFF')
 
-#         if context.buildUsdImaging:
-#             extraArgs.append('-DPXR_BUILD_USD_IMAGING=ON')
-#         else:
-#             extraArgs.append('-DPXR_BUILD_USD_IMAGING=OFF')
+        if context.buildUsdImaging:
+            extraArgs.append('-DPXR_BUILD_USD_IMAGING=ON')
+        else:
+            extraArgs.append('-DPXR_BUILD_USD_IMAGING=OFF')
 
-#         if context.buildUsdview:
-#             extraArgs.append('-DPXR_BUILD_USDVIEW=ON')
-#         else:
-#             extraArgs.append('-DPXR_BUILD_USDVIEW=OFF')
+        if context.buildUsdview:
+            extraArgs.append('-DPXR_BUILD_USDVIEW=ON')
+        else:
+            extraArgs.append('-DPXR_BUILD_USDVIEW=OFF')
 
-#         if context.buildAlembic:
-#             extraArgs.append('-DPXR_BUILD_ALEMBIC_PLUGIN=ON')
-#             if context.enableHDF5:
-#                 extraArgs.append('-DPXR_ENABLE_HDF5_SUPPORT=ON')
+        if context.buildAlembic:
+            extraArgs.append('-DPXR_BUILD_ALEMBIC_PLUGIN=ON')
+            if context.enableHDF5:
+                extraArgs.append('-DPXR_ENABLE_HDF5_SUPPORT=ON')
 
-#                 # CMAKE_PREFIX_PATH isn't sufficient for the FindHDF5 module 
-#                 # to find the HDF5 we've built, so provide an extra hint.
-#                 extraArgs.append('-DHDF5_ROOT="{instDir}"'
-#                                  .format(instDir=context.instDir))
-#             else:
-#                 extraArgs.append('-DPXR_ENABLE_HDF5_SUPPORT=OFF')
-#         else:
-#             extraArgs.append('-DPXR_BUILD_ALEMBIC_PLUGIN=OFF')
+                # CMAKE_PREFIX_PATH isn't sufficient for the FindHDF5 module 
+                # to find the HDF5 we've built, so provide an extra hint.
+                extraArgs.append('-DHDF5_ROOT="{instDir}"'
+                                 .format(instDir=context.instDir))
+            else:
+                extraArgs.append('-DPXR_ENABLE_HDF5_SUPPORT=OFF')
+        else:
+            extraArgs.append('-DPXR_BUILD_ALEMBIC_PLUGIN=OFF')
 
-#         if context.buildDraco:
-#             extraArgs.append('-DPXR_BUILD_DRACO_PLUGIN=ON')
-#             draco_root = (context.dracoLocation
-#                           if context.dracoLocation else context.instDir)
-#             extraArgs.append('-DDRACO_ROOT="{}"'.format(draco_root))
-#         else:
-#             extraArgs.append('-DPXR_BUILD_DRACO_PLUGIN=OFF')
+        if context.buildDraco:
+            extraArgs.append('-DPXR_BUILD_DRACO_PLUGIN=ON')
+            draco_root = (context.dracoLocation
+                          if context.dracoLocation else context.instDir)
+            extraArgs.append('-DDRACO_ROOT="{}"'.format(draco_root))
+        else:
+            extraArgs.append('-DPXR_BUILD_DRACO_PLUGIN=OFF')
 
-#         if context.buildMaterialX:
-#             extraArgs.append('-DPXR_BUILD_MATERIALX_PLUGIN=ON')
-#         else:
-#             extraArgs.append('-DPXR_BUILD_MATERIALX_PLUGIN=OFF')
+        if context.buildMaterialX:
+            extraArgs.append('-DPXR_BUILD_MATERIALX_PLUGIN=ON')
+        else:
+            extraArgs.append('-DPXR_BUILD_MATERIALX_PLUGIN=OFF')
 
-#         if context.buildKatana:
-#             if context.katanaApiLocation:
-#                 extraArgs.append('-DKATANA_API_LOCATION="{apiLocation}"'
-#                                  .format(apiLocation=context.katanaApiLocation))
-#             extraArgs.append('-DPXR_BUILD_KATANA_PLUGIN=ON')
-#         else:
-#             extraArgs.append('-DPXR_BUILD_KATANA_PLUGIN=OFF')
+        if context.buildKatana:
+            if context.katanaApiLocation:
+                extraArgs.append('-DKATANA_API_LOCATION="{apiLocation}"'
+                                 .format(apiLocation=context.katanaApiLocation))
+            extraArgs.append('-DPXR_BUILD_KATANA_PLUGIN=ON')
+        else:
+            extraArgs.append('-DPXR_BUILD_KATANA_PLUGIN=OFF')
 
-#         if Windows():
-#             # Increase the precompiled header buffer limit.
-#             extraArgs.append('-DCMAKE_CXX_FLAGS="/Zm150"')
+        if Windows():
+            # Increase the precompiled header buffer limit.
+            extraArgs.append('-DCMAKE_CXX_FLAGS="/Zm150"')
 
-#         extraArgs += buildArgs
+        extraArgs += buildArgs
 
-#         RunCMake(context, force, extraArgs)
+        RunCMake(context, force, extraArgs)
 
-# USD = Dependency("USD", InstallUSD, "include/pxr/pxr.h")
+USD = Dependency("USD", InstallUSD, "include/pxr/pxr.h")
 
 ############################################################
 # Install script
@@ -1729,7 +1729,7 @@ if extraPythonPaths:
 
 # Determine list of dependencies that are required based on options
 # user has selected.
-requiredDependencies = [ZLIB, TBB]
+requiredDependencies = [ZLIB, BOOST, TBB]
 
 if context.buildAlembic:
     if context.enableHDF5:
@@ -1746,7 +1746,8 @@ if context.buildImaging:
     if context.enablePtex:
         requiredDependencies += [PTEX]
 
-    requiredDependencies += [GLEW]
+    requiredDependencies += [GLEW,
+                             OPENSUBDIV]
 
     if context.enableOpenVDB:
         requiredDependencies += [BLOSC, OPENEXR, OPENVDB]
@@ -2010,7 +2011,7 @@ for dir in [context.usdInstDir, context.instDir, context.srcDir,
 
 try:
     # Download and install 3rd-party dependencies, followed by USD.
-    for dep in dependenciesToBuild :
+    for dep in dependenciesToBuild + [USD]:
         PrintStatus("Installing {dep}...".format(dep=dep.name))
         dep.installer(context, 
                       buildArgs=context.GetBuildArguments(dep),
