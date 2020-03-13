@@ -34,3 +34,11 @@ jobs:
 
      - script: python build_scripts/build_usd.py $(InstallFolder)
        displayName: 'Run build script!'
+      
+     - task: ArchiveFiles@2
+       inputs:
+         rootFolderOrFile: '$(Build.BinariesDirectory)\install'
+         includeRootFolder: true
+         archiveType: 'zip'
+         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+         replaceExistingArchive: true
