@@ -1830,12 +1830,12 @@ for dep in requiredDependencies:
             dependenciesToBuild.append(dep)
 
 # Verify toolchain needed to build required dependencies
-if (not find_executable("g++") and
-    not find_executable("clang") and
-    not GetXcodeDeveloperDirectory() and
-    not GetVisualStudioCompilerAndVersion()):
-    PrintError("C++ compiler not found -- please install a compiler")
-    sys.exit(1)
+# if (not find_executable("g++") and
+#     not find_executable("clang") and
+#     not GetXcodeDeveloperDirectory() and
+#     not GetVisualStudioCompilerAndVersion()):
+#     PrintError("C++ compiler not found -- please install a compiler")
+#     sys.exit(1)
 
 pythonExecutable = find_executable("python")
 if pythonExecutable:
