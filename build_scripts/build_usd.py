@@ -659,7 +659,7 @@ def InstallBoost(context, force, buildArgs):
             if IsVisualStudio2017OrGreater():
                 b2_settings.append("toolset=msvc-14.1")
             else:
-                b2_settings.append("toolset=msvc-14.0")
+                b2_settings.append("toolset=msvc-14.1")
 
         if MacOS():
             # Must specify toolset=clang to ensure install_name for boost
