@@ -32,5 +32,5 @@ jobs:
         echo %PATH%
         cl.exe
 
-    #  - script: python build_scripts/build_usd.py $(InstallFolder)
-    #    displayName: 'Run build script!'
+     - script: python build_scripts/build_usd.py $(InstallFolder)
+       displayName: 'Run build script!'
