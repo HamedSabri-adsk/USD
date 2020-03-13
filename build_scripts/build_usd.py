@@ -584,8 +584,8 @@ elif Windows():
         BOOST_URL = "https://downloads.sourceforge.net/project/boost/boost/1.65.1/boost_1_65_1.tar.gz"
         BOOST_VERSION_FILE = "include/boost-1_65_1/boost/version.hpp"
     else:
-        BOOST_URL = "https://downloads.sourceforge.net/project/boost/boost/1.61.0/boost_1_61_0.tar.gz"
-        BOOST_VERSION_FILE = "include/boost-1_61/boost/version.hpp"
+        BOOST_URL = "https://downloads.sourceforge.net/project/boost/boost/1.65.1/boost_1_65_1.tar.gz"
+        BOOST_VERSION_FILE = "include/boost-1_65_1/boost/version.hpp"
 
 
 def InstallBoost(context, force, buildArgs):
