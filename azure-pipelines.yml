@@ -40,5 +40,11 @@ jobs:
          rootFolderOrFile: '$(Build.BinariesDirectory)\install'
          includeRootFolder: true
          archiveType: 'zip'
-         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+         archiveFile: '$(Build.ArtifactStagingDirectory)/USD-20.02-Windows-Python2.7.zip'
          replaceExistingArchive: true
+     - task: PublishBuildArtifacts@1
+       inputs:
+         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+         ArtifactName: 'USD-20.02-Windows-Python2.7'
+         publishLocation: 'Container'
+         parallel: true
